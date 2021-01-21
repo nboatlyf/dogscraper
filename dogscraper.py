@@ -31,10 +31,12 @@ listings = soup.find_all('div', class_=re.compile('profile-listing-updated'))
 
 time_parser = re.compile('(?P<time_count>\d+)\s(?P<time_type>[a-z]+)')
 
-happy_message = '''\
+happy_message = f'''\
 Subject: Dog alert!
 
-There's a new goddam dog in town. Woof woof!'''
+There's a new goddam dog in town. Woof woof!
+
+{URL}'''
 
 sad_message = '''\
 Subject: No new dogs :'(

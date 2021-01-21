@@ -7,11 +7,8 @@ page = requests.get(URL)
 
 soup = BeautifulSoup(page.content, 'html.parser')
 
-#print(soup.prettify())
-#all_text = soup.get_text()
 
 
-#listings = soup.find_all('div', class_=re.compile('profile-listing-updated'))
 listings = soup.find_all('div', class_=re.compile('profile-listing-updated'))
 
 time_parser = re.compile('(?P<time_count>\d+)\s(?P<time_type>[a-z]+)')

@@ -2,12 +2,16 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-URL = 'https://www.pets4homes.co.uk/search/?type_id=3&breed_id=142&advert_type=0&results=20&sort=datenew'
+
+
+
+english_bulldog_id = 126
+golder_retriever_id = 142
+scottish_terrier_id = 208
+
+URL = f'''https://www.pets4homes.co.uk/search/?type_id=3&breed_id={english_bulldog_id}&advert_type=0&results=20&sort=datenew'''
 page = requests.get(URL)
-
 soup = BeautifulSoup(page.content, 'html.parser')
-
-
 
 listings = soup.find_all('div', class_=re.compile('profile-listing-updated'))
 

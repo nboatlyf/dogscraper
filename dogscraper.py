@@ -17,7 +17,17 @@ listings = soup.find_all('div', class_=re.compile('profile-listing-updated'))
 #prog = re.compile('\n\xa0\xa0(?P<time_count>\d+)\s[a-z]+')
 updated_time_matcher = re.compile('(?P<time_count>\d+)\s(?P<time_type>[a-z]+)')
 
-message = 'No new dogs :('
+happy_message = '''\
+Subject: Dog alert!
+
+There's a new goddam dog in town. Woof woof!'''
+
+sad_message = '''\
+Subject: No new dogs :'(
+
+Will we ever have a woofer to call our own?'''
+
+message = sad_message
 for listing in listings:
 
     updated_time = updated_time_matcher.search(listing.string)
@@ -25,10 +35,22 @@ for listing in listings:
     time_count = int(updated_time.group('time_count'))
     time_type = updated_time.group('time_type')
 
-    if time_type in ('minute', 'minutes'):
-        if time_count <= 10:
-            message = '''There's a new dog in town!'''
-            break
+    if time_type in 'seconds':
+        time_count_multiplier = 1 / 60
+    elif time_type in 'minutes':
+        time_count_multiplier = 1
+    elif time_type in 'hours':
+        time_count_multiplier = 60
+    elif time_type in 'days':
+        time_count_multiplier = 60 * 24
+    elif time_type in 'months':
+        time_count_multiplier = 60 * 24 * 30
+    else:
+        ValueError('''Unknown time type. Please check how 'listing updated time' is being parsed.''')
+    minutes_since_update = time_count * time_count_multiplier
 
+    print(f'''This listing was posted {str(time_count)} {time_type} ago. That's {minutes_since_update} minutes.''')
+    if minutes_since_update < 0.5:
+        message = happy_message
+        break
 print(message)
-

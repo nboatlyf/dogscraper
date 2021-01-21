@@ -72,6 +72,7 @@ for listing in listings:
     if minutes_since_update < 15:
         message = happy_message
         send_email('s.seed@protonmail.ch', message)
+        send_email('rochelle_smith@hotmail.co.uk', message)
         break
 
 print(message)

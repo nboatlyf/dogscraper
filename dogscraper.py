@@ -21,9 +21,11 @@ def send_email(recipient_email, message):
 
 english_bulldog_id = 126
 golder_retriever_id = 142
+jack_russell_id = 157
 scottish_terrier_id = 208
+yorkshire_terrier_id = 230
 
-URL = f'''https://www.pets4homes.co.uk/search/?type_id=3&breed_id={english_bulldog_id}&advert_type=0&results=20&sort=datenew'''
+URL = f'''https://www.pets4homes.co.uk/search/?type_id=3&breed_id={yorkshire_terrier_id}&advert_type=0&results=20&sort=datenew'''
 page = requests.get(URL)
 soup = BeautifulSoup(page.content, 'html.parser')
 

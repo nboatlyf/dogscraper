@@ -5,8 +5,6 @@ import smtplib
 import ssl
 
 
-
-
 english_bulldog_id = 126
 golder_retriever_id = 142
 scottish_terrier_id = 208

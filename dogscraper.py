@@ -14,8 +14,7 @@ soup = BeautifulSoup(page.content, 'html.parser')
 #listings = soup.find_all('div', class_=re.compile('profile-listing-updated'))
 listings = soup.find_all('div', class_=re.compile('profile-listing-updated'))
 
-#prog = re.compile('\n\xa0\xa0(?P<time_count>\d+)\s[a-z]+')
-updated_time_matcher = re.compile('(?P<time_count>\d+)\s(?P<time_type>[a-z]+)')
+time_parser = re.compile('(?P<time_count>\d+)\s(?P<time_type>[a-z]+)')
 
 happy_message = '''\
 Subject: Dog alert!
@@ -30,7 +29,7 @@ Will we ever have a woofer to call our own?'''
 message = sad_message
 for listing in listings:
 
-    updated_time = updated_time_matcher.search(listing.string)
+    updated_time = time_parser.search(listing.string)
 
     time_count = int(updated_time.group('time_count'))
     time_type = updated_time.group('time_type')

@@ -64,7 +64,7 @@ for listing in listings:
     minutes_since_update = time_count * time_count_multiplier
 
     print(f'''This listing was posted {str(time_count)} {time_type} ago. That's {minutes_since_update} minutes.''')
-    if minutes_since_update < 0.5:
+    if minutes_since_update < 15:
         message = happy_message
         send_email('s.seed@protonmail.ch', message)
         break

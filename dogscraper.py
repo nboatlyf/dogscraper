@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 import re
 import requests
+import smtplib
+import ssl
 
 
 
@@ -53,4 +55,20 @@ for listing in listings:
     if minutes_since_update < 0.5:
         message = happy_message
         break
+
 print(message)
+
+def send_email(recipient_email, message):
+    sender_email = "sam.seed.dev@gmail.com"
+
+    port = 465  # For SSL
+    password = 'donkeyelephant999dolphins'
+
+    # Create a secure SSL context
+    context = ssl.create_default_context()
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
+        server.login("sam.seed.dev@gmail.com", password)
+        server.sendmail(sender_email, recipient_email, message)
+
+send_email('s.seed@protonmail.ch', message)

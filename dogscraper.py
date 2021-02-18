@@ -1,78 +1,43 @@
-from bs4 import BeautifulSoup
-import re
-import requests
-import smtplib
-import ssl
+import os
 
-
-def send_email(recipient_email, message):
-    sender_email = "sam.seed.dev@gmail.com"
-
-    port = 465  # For SSL
-    password = 'donkeyelephant999dolphins'
-
-    # Create a secure SSL context
-    context = ssl.create_default_context()
-
-    with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
-        server.login("sam.seed.dev@gmail.com", password)
-        server.sendmail(sender_email, recipient_email, message)
-
+from breed import Breed
+from send_email import send_email
 
 english_bulldog_id = 126
 golder_retriever_id = 142
+goldendoodle_id = 143
 jack_russell_id = 157
 labrador_retriever_id = 163
 scottish_terrier_id = 208
 yorkshire_terrier_id = 230
+mixed_breed_id = 451
+italian_greyhound_id = 470
 
-URL = f'''https://www.pets4homes.co.uk/search/?type_id=3&breed_id={scottish_terrier_id}&advert_type=0&results=20&sort=datenew'''
-page = requests.get(URL)
-soup = BeautifulSoup(page.content, 'html.parser')
+chosen_breeds = [scottish_terrier_id, yorkshire_terrier_id, italian_greyhound_id]
 
-listings = soup.find_all('div', class_=re.compile('profile-listing-updated'))
-
-time_parser = re.compile('(?P<time_count>\d+)\s(?P<time_type>[a-z]+)')
-
-happy_message = f'''\
+def scrape_dogs(time_period_to_check, *breed_ids):
+    breeds_with_recent_posts = []
+    for breed_id in breed_ids:
+        breed = Breed(breed_id)
+        if breed.minutes_since_last_post < time_period_to_check:
+            breeds_with_recent_posts.append(breed)
+    if len(breeds_with_recent_posts) == 0:
+        print("No dogs :(")
+        exit
+    else:
+        if len(breeds_with_recent_posts) == 1:
+            dog_alert_text = "There's a new goddam dog in town. Woof woof!"
+        elif len(breeds_with_recent_posts) > 1:
+            dog_alert_text = "There's some new goddam dogs in town. Woof woof!"
+        dog_alert_URLs = os.linesep.join([f"{breed.name}: {breed.URL}" for breed in breeds_with_recent_posts])
+        dog_alert_message = f"""\
 Subject: Dog alert!
 
-There's a new goddam dog in town. Woof woof!
+{dog_alert_text}
 
-{URL}'''
+{dog_alert_URLs}"""
+        print(dog_alert_message)
+        send_email('s.seed@protonmail.ch', dog_alert_message)
+        send_email('rochelle_smith@hotmail.co.uk', dog_alert_message)
 
-sad_message = '''\
-Subject: No new dogs :'(
-
-Will we ever have a woofer to call our own?'''
-
-message = sad_message
-for listing in listings:
-
-    updated_time = time_parser.search(listing.string)
-
-    time_count = int(updated_time.group('time_count'))
-    time_type = updated_time.group('time_type')
-
-    if time_type in 'seconds':
-        time_count_multiplier = 1 / 60
-    elif time_type in 'minutes':
-        time_count_multiplier = 1
-    elif time_type in 'hours':
-        time_count_multiplier = 60
-    elif time_type in 'days':
-        time_count_multiplier = 60 * 24
-    elif time_type in 'months':
-        time_count_multiplier = 60 * 24 * 30
-    else:
-        ValueError('''Unknown time type. Please check how 'listing updated time' is being parsed.''')
-    minutes_since_update = time_count * time_count_multiplier
-
-    print(f'''This listing was posted {str(time_count)} {time_type} ago.''')
-    if minutes_since_update < 15:
-        message = happy_message
-        send_email('s.seed@protonmail.ch', message)
-        send_email('rochelle_smith@hotmail.co.uk', message)
-        break
-
-print(message)
+scrape_dogs(15, *chosen_breeds)
